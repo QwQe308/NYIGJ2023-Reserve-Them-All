@@ -82,7 +82,7 @@ var iu = {
         cost(x = getIULevel(this.id)){return n(128).mul(n(2).pow(x))},
         description(){return `t2.4 - 在你的反物质为1时, 你的物质维度购买数归零后时间倒流 ${formatWhole(this.effect1())}s<br>(能量不变,最高维度数量倒流时暂时保留)<br>无限点获取*1.5^x. (当前: *${format(this.effect2())})`},
         effect1(x = getIULevel(this.id)){
-            return [null,n(40),n(120),n(360)][x.toNumber()]
+            return [n(0),n(40),n(120),n(360)][x.toNumber()]
         },
         effect2(x = getIULevel(this.id)){
             return n(1.5).pow(x)

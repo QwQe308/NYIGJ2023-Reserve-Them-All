@@ -74,11 +74,11 @@ function HTMLupdate(){
     if(shift) w("downgradeInfo","处于降级模式")
     else w("downgradeInfo","")
     if(!hasIU(20)){
-        e("ndAuto").style.visibility = "hidden"
+        e("ndAuto").style.display = "none"
         e("energy").style.visibility = "hidden"
     }
     else{
-        e("ndAuto").style.visibility = "visible"
+        e("ndAuto").style.display = "block"
         e("energy").style.visibility = "visible"
     }
     w("ndAutoCD",` ${format(ndAutoCDTicker,1)}s/${format(getNDAutoCD(),1)}s`)
