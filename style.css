@@ -69,7 +69,6 @@
     background-color:rgb(200,200,175);
     float: right;
     color: rgb(50,50,100);
-    visibility:hidden;
     /* position: relative; */
 }
 
@@ -118,6 +117,20 @@
     /* position: relative; */
 }
 
+#switchShift{
+    height: 30px;
+    width: 200px;
+    transition-duration: 0.4s;
+    border: 3px solid rgb(200,150,0);
+    background-color:rgb(200,200,175);
+    color: rgb(50,50,100);
+    vertical-align:top;
+    /* position: relative; */
+}
+#switchShift:hover{
+    cursor:pointer;
+    background-color:rgb(175,175,0);
+}
 
 .disabled{
     background-color: rgb(150,150,150);
