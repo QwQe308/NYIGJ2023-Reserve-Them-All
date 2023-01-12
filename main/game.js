@@ -46,8 +46,6 @@ function HTMLupdate(){
     else e("iu44Info").style.visibility = "visible"
     w("iu44Info",`你当前的IU44基准值为x${format(avgMult)}`)
 
-    if(player.am.neq(1) && !player.infinitied) e("infButton").style.visibility = "hidden"
-    else e("infButton").style.visibility = "visible"
     if(!player.infinitied) e("infTabButton").style.display = "none"
     else e("infTabButton").style.display = "inline-block"
     e("infButton").innerHTML = `大塌缩以获得 ${formatWhole(getInfGain())} 无限点<br>基础获取量:${player.am.eq(1)?"1(Capped)":"0<br>(到达1AM以获取下一个无限点)"}`
