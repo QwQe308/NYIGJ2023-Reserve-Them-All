@@ -12,7 +12,7 @@ function HTMLupdate(){
         //数据更新
         e(`nd${dim}mult`).innerHTML = "x"+format(tmpNDmult[dim])
         e(`nd${dim}num`).innerHTML = `${formatWhole(player.nd[dim].num)}`
-        if(player.nd[dim].num.neq(1) || hasIU(31)) e(`nd${dim}buy`).innerHTML = `购买一个<br>消耗: ${formatWhole(getDimCost(dim))} ${(hasIU(50)&&dim==8?'能量':'物质')}`
+        if(player.nd[dim].num.neq(1) || hasIU(31)) e(`nd${dim}buy`).innerHTML = `购买一个<br>消耗: ${formatWhole(getDimCost(dim))} ${(hasIU(50)&&dim==8?'':'物质')}`
         else e(`nd${dim}buy`).innerHTML = `Capped at 1`
         if(dim <= 7) w(`nd${dim}proc`, `(+${format(getNDproc(dim+1).div(player.nd[dim].num.max(1)).mul(100))}%/s)`)
 
@@ -74,6 +74,8 @@ function HTMLupdate(){
     if(!hasIU(20)){
         e("ndAuto").style.display = "none"
         e("energy").style.display = "none"
+        e('advancedNdAuto').style.display = "none"
+        e('sacrificeAuto').style.display = "none"
     }
     else{
         if(!hasIU(51)){
