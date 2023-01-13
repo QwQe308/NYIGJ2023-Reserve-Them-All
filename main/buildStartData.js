@@ -5,6 +5,7 @@ var shift = false
 
 var ordNum = [null,"一","二","三","四","五","六","七","八"]
 var ndAutoCDTicker = n(0)
+var sacrificeAutoCDTicker = n(0)
 //define player
 var player = {}
 load()
@@ -14,7 +15,11 @@ loader("energy",n(0))
 loader("infTime",n(0))
 loader("infinitied",false)
 loader("autoNDSetting",n(0))
+loader("advancedAutoNDSetting",n(0))
+loader("sacrificeAutoCD",n(0))
+loader("sacrificeAutoMax",n(0))
 loader("rewinded",false)
+loader("sacrifice",n(0))
 for(upg in iu){
     loader(["iu",upg],n(0))
     loader(["iuUnl",Number(upg)-Number(upg)%10],false)
@@ -45,6 +50,9 @@ function setup(){
     tmpStr += `</div>`
     w("iuTable",tmpStr)
     e("ndAutoInput").value = format(player.autoNDSetting)
+    e("advancedNdAutoInput").value = format(player.advancedAutoNDSetting)
+    e("sacrificeAutoCD").value = format(player.sacrificeAutoCD)
+    e("sacrificeAutoMax").value = format(player.sacrificeAutoMax)
     HTMLupdate()
 }
 

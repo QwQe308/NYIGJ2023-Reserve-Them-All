@@ -12,7 +12,7 @@ function HTMLupdate(){
         //数据更新
         e(`nd${dim}mult`).innerHTML = "x"+format(tmpNDmult[dim])
         e(`nd${dim}num`).innerHTML = `${formatWhole(player.nd[dim].num)}`
-        if(player.nd[dim].num.neq(1) || hasIU(31)) e(`nd${dim}buy`).innerHTML = `购买一个<br>消耗: ${formatWhole(getDimCost(dim))} 物质`
+        if(player.nd[dim].num.neq(1) || hasIU(31)) e(`nd${dim}buy`).innerHTML = `购买一个<br>消耗: ${formatWhole(getDimCost(dim))} ${(hasIU(50)&&dim==8?'能量':'物质')}`
         else e(`nd${dim}buy`).innerHTML = `Capped at 1`
         if(dim <= 7) w(`nd${dim}proc`, `(+${format(getNDproc(dim+1).div(player.nd[dim].num.max(1)).mul(100))}%/s)`)
 
@@ -73,14 +73,35 @@ function HTMLupdate(){
     else w("downgradeInfo","")
     if(!hasIU(20)){
         e("ndAuto").style.display = "none"
-        e("energy").style.visibility = "hidden"
+        e("energy").style.display = "none"
     }
     else{
-        e("ndAuto").style.display = "block"
-        e("energy").style.visibility = "visible"
+        if(!hasIU(51)){
+            e("ndAuto").style.display = "block"
+            e('advancedNdAuto').style.display = "none"
+        }else{
+            e("ndAuto").style.display = "none"
+            e('advancedNdAuto').style.display = "block"
+        }
+        if(!hasIU(50)){
+            e('sacrificeAuto').style.display = "none"
+        }else{
+            e('sacrificeAuto').style.display = "block"
+        }
+        e("energy").style.display = "block"
     }
     w("ndAutoCD",` ${format(ndAutoCDTicker,1)}s/${format(getNDAutoCD(),1)}s`)
-    w("energy",`你拥有 ${format(player.energy,1)} 能量(+${format(getENGain())}/s, 基于每秒反物质泯灭量) ,使得所有物质维度的价格 /${format(getENEffect())}.`)
+    w("advancedNdAutoCD",` ${format(ndAutoCDTicker,1)}s/${format(getNDAutoCD(),1)}s`)
+    w("energy",`你拥有 ${format(player.energy,1)} 能量(+${format(getENGain().div(diff))}/s, 基于每秒反物质泯灭量) ,使得所有物质维度的价格 /${format(getENEffect())}.`)
+    //更新献祭按钮状态
+    if(hasIU(50)){
+        e(`sacrifice`).style.visibility = 'visible'
+        w(`sacrifice`,`献祭一到七维的数量,让献祭计数增加 ${formatWhole(player.nd[8].num.sub(player.sacrifice).max(0))} 个八维(当前: ${formatWhole(player.sacrifice)}),献祭倍率将由 *${format(getSacrificeEffect())} 增加到 *${format(getSacrificeEffect(player.nd[8].num.max(player.sacrifice)))}`)
+        if(canSacrifice()) e(`sacrifice`).className = 'can sacrifice'
+        else e(`sacrifice`).className = `locked sacrifice`
+    }else{
+        e(`sacrifice`).style.visibility = 'hidden'
+    }
 }
 
 var tabList = ["dimTab","infTab"]
@@ -103,11 +124,12 @@ function gameloop(){
 
 
     calcDiff()
-    if(hasIU(20)) player.energy = player.energy.add(getENGain())
+    if(hasIU(20)) player.energy = player.energy.add(getENGain().mul(diff))
     for(dim=7;dim>=1;dim--){
         player.nd[dim].num = player.nd[dim].num.add(getNDproc(dim+1).mul(diff))
     }
     if(hasIU(42)) player.am = player.am.add(getNDproc(2).mul(diff))
+    if(hasIU(62)) player.nd[6].num = player.nd[6].num.add(getNDproc(8).mul(diff))
     player.am = player.am.sub(getNDproc(1).mul(diff)).max(1)
 
     if(hasIU(24) && player.am.eq(1) && !player.rewinded){
@@ -130,6 +152,7 @@ function gameloop(){
     player.infTime = player.infTime.add(diff)
     ndAutoCDTicker = ndAutoCDTicker.add(diff)
     if(hasIU(20)) checkNDAuto()
+    if(hasIU(50)) checkSacrificeAuto()
 
     HTMLupdate()
     save()

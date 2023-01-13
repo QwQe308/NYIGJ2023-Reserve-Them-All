@@ -17,7 +17,8 @@ function getNDmult(){
     if(hasIU(30)) mult[2] = mult[2].mul(getIUEffect(30,1))
     if(hasIU(34)) mult[2] = mult[2].div(getIUEffect(34,1))
     for(dim=1;dim<=8;dim++){
-        mult[dim] = mult[dim].mul(two.pow(player.nd[dim].bought))
+        if(!hasIU(52)) mult[dim] = mult[dim].mul(two.pow(player.nd[dim].bought))
+        else mult[dim] = mult[dim].mul(two.pow(player.nd[dim].bought.div(getIUEffect(52,1)).floor().mul(getIUEffect(52,1))))
     }
 
     if(hasIU(40)){
@@ -38,6 +39,15 @@ function getNDmult(){
             if(mult[dim].gt(avgMult)) mult[dim] = mult[dim].div(getIUEffect(44,1))
         }
     }
+    
+    if(hasIU(53)){
+        for(dim=8;dim>=1;dim--){
+            mult[dim] = mult[dim].div(getIUEffect(53,1).pow(dim))
+        }
+    }
+    
+    mult[8] = mult[8].mul(getSacrificeEffect())
+    if(hasIU(62)) mult[7] = n(0)
     return mult//好耶
 }
 function getNDproc(id){
@@ -58,6 +68,7 @@ var ndCostIndex = [
     [n(1e24),n(1e12)],//cost , costMult 8
 ]
 function getDimCost(id){
+    if(hasIU(50)) ndCostIndex[8] = [n(1e12),n(1e6)]
     var costInc = ndCostIndex[id][1]
     if(id==1&&hasIU(33)) costInc = costInc.mul(5)
     var cost = ndCostIndex[id][0].mul(costInc.pow(player.nd[id].bought))
@@ -70,10 +81,17 @@ function getDimCost(id){
 function canBuyND(id){
     if(!getNDunlocked(id)) return false
     if(!hasIU(31)) if(player.nd[id].num.eq(1)) return false
+    if(id==8 && hasIU(50)) if(player.energy.lt(getDimCost(8))) return false
     return true
 }
 function buyND(id){
     if(!canBuyND(id)) return
+    if(id==8 && hasIU(50)){
+        player.energy = player.energy.sub(getDimCost(id))
+        player.nd[id].num = player.nd[id].num.add(1)
+        player.nd[id].bought = player.nd[id].bought.add(1)
+        return
+    }
     player.am = player.am.add(getDimCost(id))
     player.nd[id].num = player.nd[id].num.add(1)
     player.nd[id].bought = player.nd[id].bought.add(1)
@@ -85,14 +103,19 @@ function getTotalBoughtND(){
 }
 
 function checkNDAuto(){
+    player.autoNDSetting = n(e("ndAutoInput").value).min(Number.MAX_VALUE)
+    player.advancedAutoNDSetting = n(e("advancedNdAutoInput").value).min(Number.MAX_VALUE)
     if(ndAutoCDTicker.lt(getNDAutoCD())) return
     ndAutoCDTicker = ndAutoCDTicker.sub(getNDAutoCD())
-    var autoNDSetting = n(e("ndAutoInput").value).min(Number.MAX_VALUE)
+    var autoNDSetting = player.autoNDSetting
+    if(hasIU(51)) autoNDSetting = player.advancedAutoNDSetting.mul(player.am)
     //console.log(autoNDSetting)
     if(autoNDSetting.lte(0)) return
 
     //IU21 - Automate Big Crunch
-    if(getInfGain().gte(1)) inf()
+    if(hasIU(21)) if(getInfGain().gte(1)) inf()
+    
+    //nd auto
     for(dim=8;dim>=1;dim--){
         while(canBuyND(dim) && getDimCost(dim).lte(autoNDSetting)) buyND(dim)
     }
@@ -108,10 +131,39 @@ function checkNDAuto(){
     for(dim=8;dim>=1;dim--){
         while(canBuyND(dim) && getDimCost(dim).lte(autoNDSetting)) buyND(dim)
     }
-    player.autoNDSetting = autoNDSetting
 }
 function getNDAutoCD(){
     var cd = n(5)
-    cd = cd.sub(getIUEffect(22,1))
+    if(hasIU(22)) cd = cd.sub(getIUEffect(22,1))
+    if(hasIU(51)) cd = cd.sub(0.5)
     return cd
+}
+
+function canSacrifice(){
+    return player.nd[8].num.gt(player.sacrifice)
+}
+function sacrifice(){
+    if(!canSacrifice()) return
+    for(dim=1;dim<=7;dim++){
+        player.nd[dim].num = zero
+    }
+    if(hasIU(64)) player.am = player.am.mul(getIUEffect(64,1))
+    player.sacrifice = player.nd[8].num
+}
+function getSacrificeEffect(x = player.sacrifice){
+    var base = n(5)
+    if(hasIU(53)) base = base.add(getIULevel(53))
+    if(hasIU(54)) base = base.add(getIULevel(54))
+    if(hasIU(60)) base = base.add(getIUEffect(60))
+    return base.pow(x)
+}
+function checkSacrificeAuto(){
+    player.sacrificeAutoCD = n(e('sacrificeAutoCD').value)
+    player.sacrificeAutoMax = n(e('sacrificeAutoMax').value)
+    if(!canSacrifice()) return
+    //sacrificeAutoCDTicker = sacrificeAutoCDTicker.add(diff)
+    if(player.nd[8].num.sub(player.sacrifice).lt(player.sacrificeAutoCD)) return
+    if(player.infTime.gt(player.sacrificeAutoMax)) return
+    sacrifice()
+    //sacrificeAutoCDTicker = n(0)
 }
