@@ -132,6 +132,17 @@
     background-color:rgb(175,175,0);
 }
 
+.sacrifice{
+/*     border-radius: 6px; */
+    height: 60px;
+    width: 75%;
+    transition-duration: 0.4s;
+    border: 3px solid rgb(200,150,200);
+    background-color: rgb(230,210,230);
+    color: rgb(50,50,100);
+    position: relative;
+}
+
 .disabled{
     background-color: rgb(150,150,150);
     cursor:not-allowed;
@@ -152,6 +163,9 @@
 
 .can.dimBuy:hover{
     background-color: rgb(190,220,190);
+}
+.can.sacrifice:hover{
+    background-color: rgb(210,180,210);
 }
 .locked.dimBuy{
     border: 2px solid rgb(200,100,100);

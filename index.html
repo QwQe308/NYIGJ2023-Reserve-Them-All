@@ -29,9 +29,12 @@
     <!-- ND -->
     <div id = "dimTab" style="display:block">
         <div id="ndAuto">自动购买所有价格不超过<input id="ndAutoInput" style="width: 80px;"></input>的维度.(从高到低购买) 自动购买间隔:<span id="ndAutoCD"></span></div>
+        <div id="advancedNdAuto">自动购买所有价格不超过当前反物质<input id="advancedNdAutoInput" style="width: 80px;"></input>倍的维度.(从高到低购买) 自动购买间隔:<span id="advancedNdAutoCD"></span></div>
+        <div id="sacrificeAuto">如果可以献祭,能增加<input id="sacrificeAutoCD" style="width: 80px;"></input>个计数后进行一次献祭.本轮无限使用<input id="sacrificeAutoMax" style="width: 80px;"></input>秒后停止献祭.</div>
         <div id="energy"></div>
         <div id="iu44Info"></div>
-        <div id = "nd" class="dim"></div>
+        <div id = "nd" class="dim"></div><br>
+        <button id='sacrifice' onclick='sacrifice()'></button>
     </div>
 
     <!-- reset -->
