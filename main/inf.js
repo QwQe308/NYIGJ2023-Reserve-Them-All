@@ -246,14 +246,14 @@ var iu = {
         cost(x = getIULevel(this.id)){return n(2.5e6).mul(n(4).pow(x))},
         description(){return `t6.1 - 增加能量的效果.(^${format(this.effect(),3)})`},
         effect(x = getIULevel(this.id)){
-            return x.div(25).add(1)
+            return x.div(40).add(1)
         },
-        cap(){return n(5)},
+        cap(){return n(4)},
         type:"upgrade",
     },
     62:{
         cost(x = getIULevel(this.id)){return n(4e6)},
-        description(){return `t6.2 - 七维倍率为0,八维在非时间迁越中还会生产六维.无限点*1.75.`},
+        description(){return `t6.2 - 七维倍率为0,八维在非时间迁越中还会生产六维.(t4.4不再计入七维)无限点*1.75.`},
         cap(){return n(1)},
         type:"challenge",
     },

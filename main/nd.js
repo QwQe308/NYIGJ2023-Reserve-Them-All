@@ -29,17 +29,7 @@ function getNDmult(){
             }
         }
     }
-    if(hasIU(44)){
-        let totalMult = one
-        for(dim=1;dim<=8;dim++){
-            totalMult = totalMult.mul(mult[dim])
-        }
-        let avgMult = totalMult.root(8)
-        for(dim=1;dim<=8;dim++){
-            if(mult[dim].gt(avgMult)) mult[dim] = mult[dim].div(getIUEffect(44,1))
-        }
-    }
-    
+
     if(hasIU(53)){
         for(dim=8;dim>=1;dim--){
             mult[dim] = mult[dim].div(getIUEffect(53,1).pow(dim))
@@ -47,11 +37,58 @@ function getNDmult(){
     }
     
     mult[8] = mult[8].mul(getSacrificeEffect())
+
+    if(hasIU(44)){
+        let totalMult = one
+        for(dim=1;dim<=8;dim++){
+            if(!hasIU(62) || dim!=7) totalMult = totalMult.mul(mult[dim])
+        }
+        let avgMult = totalMult.root(hasIU(62)?7:8)
+        for(dim=1;dim<=8;dim++){
+            if(mult[dim].gt(avgMult)) mult[dim] = mult[dim].div(getIUEffect(44,1))
+        }
+    }
+    
     if(hasIU(62)) mult[7] = n(0)
     return mult//好耶
 }
 function getNDproc(id){
     return tmpNDmult[id].mul(player.nd[id].num)
+}
+
+function getIU44Avg(){
+    var mult = [null,one,one,one,one,one,one,one,one]
+    mult[1] = mult[1].div(getIUEffect(12,1))
+    mult[1] = mult[1].mul(getIUEffect(13))
+    if(hasIU(30)) mult[2] = mult[2].mul(getIUEffect(30,1))
+    if(hasIU(34)) mult[2] = mult[2].div(getIUEffect(34,1))
+    for(dim=1;dim<=8;dim++){
+        if(!hasIU(52)) mult[dim] = mult[dim].mul(two.pow(player.nd[dim].bought))
+        else mult[dim] = mult[dim].mul(two.pow(player.nd[dim].bought.div(getIUEffect(52,1)).floor().mul(getIUEffect(52,1))))
+    }
+
+    if(hasIU(40)){
+        for(dim=8;dim>=1;dim--){
+            if(getNDunlocked(dim)){
+                mult[dim] = mult[dim].mul(getIUEffect(40))
+                break
+            }
+        }
+    }
+
+    if(hasIU(53)){
+        for(dim=8;dim>=1;dim--){
+            mult[dim] = mult[dim].div(getIUEffect(53,1).pow(dim))
+        }
+    }
+    
+    mult[8] = mult[8].mul(getSacrificeEffect())
+
+    let totalMult = one
+    for(dim=1;dim<=8;dim++){
+        if(!hasIU(62) || dim!=7) totalMult = totalMult.mul(mult[dim])
+    }
+    return totalMult.root(hasIU(62)?7:8)
 }
 
 var tmpNDmult = [null,zero,zero,zero,zero,zero,zero,zero,zero]

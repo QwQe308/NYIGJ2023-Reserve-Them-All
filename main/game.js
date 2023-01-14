@@ -37,14 +37,9 @@ function HTMLupdate(){
         }
     }
 
-    let totalMult = one
-    for(dim=1;dim<=8;dim++){
-        totalMult = totalMult.mul(tmpNDmult[dim])
-    }
-    let avgMult = totalMult.root(8)
     if(!hasIU(44)) e("iu44Info").style.visibility = "hidden"
     else e("iu44Info").style.visibility = "visible"
-    w("iu44Info",`你当前的IU44基准值为x${format(avgMult)}`)
+    w("iu44Info",`你当前的IU44基准值为x${format(getIU44Avg())}`)
 
     if(!player.infinitied) e("infTabButton").style.display = "none"
     else e("infTabButton").style.display = "inline-block"
@@ -126,7 +121,7 @@ function gameloop(){
 
 
     calcDiff()
-    if(hasIU(20)) player.energy = player.energy.add(getENGain().mul(diff))
+    if(hasIU(20)) player.energy = player.energy.add(getENGain().mul(diff)).min(1.79e308)
     for(dim=7;dim>=1;dim--){
         player.nd[dim].num = player.nd[dim].num.add(getNDproc(dim+1).mul(diff))
     }
